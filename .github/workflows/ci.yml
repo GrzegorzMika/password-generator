@@ -53,6 +53,46 @@ jobs:
       - name: Lint code for consistent style
         run: bin/rubocop -f github
 
+
+  build-and-push-docker-image:
+    runs-on: ubuntu-latest # Specify the runner environment
+    # Grant write permissions to the GITHUB_TOKEN for the 'contents' scope
+    # This allows the workflow to commit and push changes back to the repository.
+    permissions:
+      contents: write
+
+    # Removed environment variables from here as they are now runtime variables
+    # for the Docker container, not build arguments for the Svelte app.
+    # For actual deployment, you will set these environment variables when
+    # running the Docker container (e.g., using -e in 'docker run' or in Kubernetes deployment spec).
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4 # Action to check out your repository code
+        with:
+          # Important: Checkout with a token that has write permissions to push back to the repo
+          # The default GITHUB_TOKEN has write permission to the current repository only when the workflow
+          # is triggered by a push or pull_request event (if not restricted by repository rules).
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3 # Action to log in to your Docker registry
+        with:
+          registry: registry.gregdev.dev
+          username: ${{ secrets.DOCKER_USERNAME }} # Your Docker Hub username stored as a GitHub Secret
+          password: ${{ secrets.DOCKER_PASSWORD }} # Your Docker Hub password/token stored as a GitHub Secret
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3 # Action to set up Docker Buildx, required for advanced Docker features
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5 # Action to build and push Docker images
+        with:
+          context: . # The build context is the current directory
+          file: ./Dockerfile # Path to your Dockerfile
+          push: true # Set to true to push the image to the registry
+          tags: |
+            registry.gregdev.dev/library/password-generator:latest
   # test:
   #   runs-on: ubuntu-latest
 
