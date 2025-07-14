@@ -13,10 +13,10 @@ require "action_cable/engine"
 # require "action_mailbox/engine" # We don't need this
 # require "action_text/engine" # We don't need this
 require "rails/test_unit/railtie"
-require "sprockets/railtie"
+# require "sprockets/railtie"
 require "rails/health/railtie"
 require "turbo-rails" # If you are using Turbo
-require "stimulus/railtie" # If you are using Stimulus
+# require "stimulus/railtie" # If you are using Stimulus
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
