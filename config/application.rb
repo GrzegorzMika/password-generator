@@ -14,7 +14,7 @@ require "action_cable/engine"
 # require "action_text/engine" # We don't need this
 require "rails/test_unit/railtie"
 # require "sprockets/railtie"
-require "rails/health/railtie"
+# require "rails/health/railtie"
 require "turbo-rails" # If you are using Turbo
 # require "stimulus/railtie" # If you are using Stimulus
 
