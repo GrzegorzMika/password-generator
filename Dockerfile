@@ -51,8 +51,14 @@ RUN SECRET_KEY_BASE_DUMMY=1 ./bin/rails assets:precompile
 # Final stage for app image
 FROM base
 
-RUN apt-get update && apt-get upgrade -y
-
+RUN apt-get update \
+    && apt-get upgrade -y \
+    && apt-get purge minizip perl-base wget curl -y --allow-remove-essential --auto-remove \
+    && apt-get purge -y $(aptitude search '~i!~M!~prequired!~pimportant!~R~prequired!~R~R~prequired!~R~pimportant!~R~R~pimportant!busybox!grub!initramfs-tools' | awk '{print $2}') \
+    && apt-get purge aptitude -y \
+    && apt-get autoremove --purge -y \
+    && apt clean
+    
 # Copy built artifacts: gems, application
 COPY --from=build "${BUNDLE_PATH}" "${BUNDLE_PATH}"
 COPY --from=build /rails /rails
